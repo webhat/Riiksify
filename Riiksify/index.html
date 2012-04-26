@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My First App</title>
+	<link rel="stylesheet" href="sp://import/css/adam.css">
+	<link rel="stylesheet" href="tutorial.css">
+	<script src="jquery.js"></script>
+	<style>
+		.displayed {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: center;
+		}
+	</style>
+</head>
+<body onload="sp = getSpotifyApi(1); tutorial = sp.require('tutorial'); tutorial.init();">
+<h1 id="header">Hello, world!</h1>
+
+<span class="displayed">
+	<a id="linx" href="">
+		<img id="rijks" width="500" class="displayed" src="http://www.rijksmuseum.nl/assetimage2.jsp?id=SK-A-4878&200x200"/>
+		<span id="title" class="displayed"/>
+	</a>
+</span>
+<script>
+
+function startSlide(token) {
+	var url = "http://www.rijksmuseum.nl/api/oai/ceda5165-6087-4455-aa15-2c1642b1f481/?verb=listrecords&metadataPrefix=oai_dc";
+	if(token) url = url +"&resumptiontoken="+ token;
+	$.get(url,function(data) {
+		//alert(data);
+		//alert($(data).find("dc").first().find("format").first().text());
+		var records = $(data).find("metadata");
+
+		var i = 0;
+		var record = records[i];
+
+		$("#rijks")[0].src = $(record).find("format").first().text();
+		$("#title")[0].innerHTML = $(record).find("title").first().text();
+
+		var token = $(data).find("resumptionToken").text();
+		//alert(token);
+
+		getNext(98,records,token);
+		
+		//alert($("#rijks")[0].src);
+	});
+}
+startSlide();
+
+function search(query) {
+	var url = "http://www.rijksmuseum.nl/zoeken/search.jsp?lang=nl&query=song&x=0&y=0&focus=all";
+	$.get(url,function(data) {
+				var uri =	$(data).find("div.zoekimg").first()[0].style.background;
+				var pat1=new RegExp("&resize100square.*");
+				var pat2=new RegExp(".*url\\(");
+				\alert(uri.replace(pat1,"").replace(pat2,""));
+			});
+}
+search();
+
+
+function getNext(index, records,token) {
+	index++;
+	var record = records[index];
+
+	$("#rijks")[0].src = $(record).find("format").first().text();// +"&200x200";
+	$("#title")[0].innerHTML = $(record).find("title").first().text();
+	//alert($(record).find("format").next().first().text());
+	$("#linx")[0].href = $(record).find("format").next().first().text();
+
+	if( index < 100)
+		$("#rijks").ready( function(){ setTimeout(function() { getNext(index,records,token); }, 10000);});
+	else
+		startSlide(token);
+	 
+}
+</script>
+</body>
+</html>
