@@ -1,0 +1,6 @@
+This was build for The Next Web Kings of Code HackBattle, place the folder containing your files inside the “Spotify” folder in your home folder (or “My Documents” in Windows). Launch Spotify, type spotify:app:$APPNAME and Spotify will load your application, offering to pin it to the sidebar for easy access later.
+
+spotify:app:Riiksify
+
+https://developer.spotify.com/technologies/apps/tutorial/
+http://hackbattle.thenextweb.com/index.php/Riiksify 
