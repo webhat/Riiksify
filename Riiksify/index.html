@@ -15,7 +15,7 @@
 		}
 	</style>
 </head>
-<body onload="sp = getSpotifyApi(1); tutorial = sp.require('tutorial'); tutorial.init();">
+<body onload="sp = getSpotifyApi(1); tutorial = sp.require('tutorial'); tutorial.init(); initTrack();">
 <h1 id="header">Hello, world!</h1>
 
 <span class="displayed">
@@ -48,18 +48,42 @@ function startSlide(token) {
 		//alert($("#rijks")[0].src);
 	});
 }
-startSlide();
+//startSlide();
 
-function search(query) {
-	var url = "http://www.rijksmuseum.nl/zoeken/search.jsp?lang=nl&query=song&x=0&y=0&focus=all";
+var sp = getSpotifyApi(1);
+var models = sp.require('sp://import/scripts/api/models');
+var player = models.player;
+
+function search(querystr) {
+	var url = "http://www.rijksmuseum.nl/zoeken/search.jsp?lang=nl&query="+ querystr +"&x=0&y=0&focus=all";
 	$.get(url,function(data) {
 				var uri =	$(data).find("div.zoekimg").first()[0].style.background;
 				var pat1=new RegExp("&resize100square.*");
 				var pat2=new RegExp(".*url\\(");
-				//alert(uri.replace(pat1,"").replace(pat2,""));
-			});
+				console.log(uri.replace(pat1,"").replace(pat2,""));
+				$("#rijks")[0].src = uri.replace(pat1,"").replace(pat2,"");
+	});
 }
-search();
+//search("song");
+//search("junk");
+//search(getTerm());
+
+function getTerm() {
+	var trackname = player.track.data.name.split(" ");
+	return trackname[trackname.length-1];
+}
+
+function initTrack() {
+	search(getTerm());
+
+	player.observe(models.EVENT.CHANGE, function (e) {
+
+		// Only update the page if the track changed
+		if (e.data.curtrack == true) {
+			search(getTerm());
+		}
+	});
+}
 
 
 function getNext(index, records,token) {
