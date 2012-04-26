@@ -56,7 +56,7 @@ function search(query) {
 				var uri =	$(data).find("div.zoekimg").first()[0].style.background;
 				var pat1=new RegExp("&resize100square.*");
 				var pat2=new RegExp(".*url\\(");
-				\alert(uri.replace(pat1,"").replace(pat2,""));
+				//alert(uri.replace(pat1,"").replace(pat2,""));
 			});
 }
 search();
